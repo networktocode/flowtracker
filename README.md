@@ -34,24 +34,38 @@ If the argparse args are not provided via the command line, then ask the user to
 This is the expected sample output during execution of the FlowTracker application:
 
 FLOW  SRC: `src` DEST: `dest` PROTO: `proto` SRC_PORT: `src_port` DEST_PORT: `dest_port` IN: `ingress` VRF: `vrf`
+##############################################################################
 
 NODE: <ip address of switch entered by user>
 
 LOAD_SHARE_MODE:
+
 VRF:
+
 IN_IF:
+
 OUT_IF:
+
 DEST:
+
 NEXT_HOP:
 
 COUNTERS:
+
 IN_IF:
+
   CRC:
+
   DROPS:
+
   RESETS:
+
 OUT_IF:
+
   CRC:
+
   DROPS:
+
   RESETS:
 
 
@@ -60,21 +74,35 @@ Hit Enter to Continue...
 NODE: <ip address of previous next-hop>
 
 LOAD_SHARE_MODE:
+
 VRF:
+
 IN_IF:
+
 OUT_IF:
+
 DEST:
+
 NEXT_HOP:
 
 COUNTERS:
+
 IN_IF:
+
   CRC:
+
   DROPS:
+
   RESETS:
+
 OUT_IF:
+
   CRC:
+
   DROPS:
+
   RESETS:
+
 
 Hit Enter to Continue...
 
