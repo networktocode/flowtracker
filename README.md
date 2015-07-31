@@ -34,7 +34,12 @@ If the argparse args are not provided via the command line, then ask the user to
 This is the expected sample output during execution of the FlowTracker application:
 
 ```
-FLOW  SRC: `src` DEST: `dest` PROTO: `proto` SRC_PORT: `src_port` DEST_PORT: `dest_port` IN: `ingress` VRF: `vrf`
+FLOW OVERVIEW:
+
+SRC: `src` DEST: `dest` 
+PROTO: `proto` SRC_PORT: `src_port` DEST_PORT: `dest_port` 
+IN: `ingress` 
+VRF: `vrf`
 
 #############################################################################
 
