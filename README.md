@@ -65,6 +65,8 @@ OUT_IF:
 
 Hit Enter to Continue...
 
+#############################################################################
+
 NODE: <ip address of previous next-hop>
 
 LOAD_SHARE_MODE:
@@ -84,7 +86,6 @@ OUT_IF:
   CRC:
   DROPS:
   RESETS:
-
 
 Hit Enter to Continue...
 
