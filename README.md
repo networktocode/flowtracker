@@ -55,11 +55,11 @@ COUNTERS:
 
 IN_IF:
 
-  CRC:
+    CRC:
 
-  DROPS:
+    DROPS:
 
-  RESETS:
+    RESETS:
 
 OUT_IF:
 
