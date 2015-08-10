@@ -1,0 +1,10 @@
+Load-share parameters used for software forwarding:
+load-share mode: address source-destination port source-destination
+Hash for VRF "default"
+Hashing to path *11.11.11.2
+Out Interface: Vlan20
+For route:
+2.2.2.2/32, ubest/mbest: 3/0
+    *via 10.1.2.2, Eth4/51, [90/130816], 11:29:07, eigrp-33, internal
+    *via 10.10.10.2, Vlan10, [90/130816], 11:29:07, eigrp-33, internal
+    *via 11.11.11.2, Vlan20, [90/130816], 11:29:07, eigrp-33, internal
