@@ -1,0 +1,7 @@
+---
+loop_ip: 4.4.4.4
+interfaces_ips:
+  - { interface: Ethernet1/49, ip: 10.10.30.2 }
+  - { interface: Ethernet1/51, ip: 10.10.40.2 }
+  - { interface: Ethernet1/50, ip: 10.10.70.2 }
+  - { interface: Ethernet1/52, ip: 10.10.80.2 }

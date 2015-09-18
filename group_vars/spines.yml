@@ -1,0 +1,12 @@
+---
+interfaces:
+    - Ethernet2/1
+    - Ethernet2/2
+    - Ethernet2/3
+    - Ethernet2/4
+
+down_interfaces:
+    - Ethernet1/1
+    - Ethernet1/2
+    - Ethernet2/11
+    - Ethernet2/12
