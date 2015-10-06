@@ -9,10 +9,10 @@ It uses the external python libraries, ``pycsco`` and ``netmiko``.
 ----
 
 There are two modes to run the script:
+* ``mode=auto`` does not prompt user to continue
+* ``mode=interactive`` prompts user to continue at each hop
 
-* mode=auto (does not prompt user to continue)
-* mode=interactive (prompts user to continue during the trace)
-
+Other arguments
 * user
 * pwd
 * src
