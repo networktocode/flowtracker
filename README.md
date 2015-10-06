@@ -13,16 +13,16 @@ There are two modes to run the script:
 * ``mode=interactive`` prompts user to continue at each hop
 
 Other arguments
-* user
-* pwd
-* src
-* dest
-* proto
-* src_port (optional)
-* dest_port (optional)
-* vrf (optional)
-* mode (default=interactive)
-* target (ip address of switch where trace will start)
+* ``user``
+* ``pwd``
+* ``src``
+* ``dest``
+* ``proto``
+* ``src_port`` (optional)
+* ``dest_port`` (optional)
+* ``vrf`` (optional)
+* ``mode`` (default=interactive)
+* ``target`` (ip address or hostname of switch where trace will start)
 
 ---
 
