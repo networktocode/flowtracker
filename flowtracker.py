@@ -1,5 +1,5 @@
-"""This script/module tracks the hop-by-hop path for a flow through Nexus switches,
-and gives interface statistics for each outgoing interface.
+"""This script/module tracks the hop-by-hop path for a flow through
+Nexus switches, and gives interface statistics for each outgoing interface.
 """
 import argparse
 import socket
@@ -14,11 +14,13 @@ from pycsco.nxos.device import Device as PYCSCO
 SSH_TYPE = 'ssh'
 PYCSCO_TYPE = 'pycsco'
 
+
 class HashError(Exception):
     """Error raised when flow's hash can't be computed.
     """
     def __init__(self, hash_output):
         self.hash_output = hash_output
+
 
 class Device(object):
     """Base class for SSH (paramiko) and NXAPI (pycsco)
@@ -45,6 +47,7 @@ class Device(object):
         """
         raise NotImplementedError
 
+
 class SshDevice(Device):
     """Class for communicating with switches over SSH.
     """
@@ -70,6 +73,7 @@ class SshDevice(Device):
 
     def disconnect(self):
         self.device.disconnect()
+
 
 class PycscoDevice(Device):
     """Class for communicating with switches over NXAPI.
@@ -236,22 +240,27 @@ def get_int_from_mac(device, mac):
     """Get an interface, given a MAC address from the CAM table.
     """
     mac_table_raw = device.show_command('show mac address-table')
-    match = re.search('{}\s+\w+\s+\d+\s+\w\s+\w\s+((\w|\d)+(\/\d+)?)'.format(mac), mac_table_raw)
+    match = re.search(
+        '{}\s+\w+\s+\d+\s+\w\s+\w\s+((\w|\d)+(\/\d+)?)'.format(mac), mac_table_raw)
     if match:
         return match.group(1)
+
 
 def get_mac_from_ip(device, ip):
     """Get a MAC address, given an IP address from the ARP table.
     """
     arp_table_raw = device.show_command('show ip arp')
-    match = re.search('{}\s+\d+:\d+:\d+\s+(((\w|\d)+\.){{2}}(\w|\d)+)'.format(ip), arp_table_raw)
+    match = re.search(
+        '{}\s+\d+:\d+:\d+\s+(((\w|\d)+\.){{2}}(\w|\d)+)'.format(ip), arp_table_raw)
     return match.group(1)
+
 
 def get_hostname(device):
     """Get the hostname of the device.
     """
     hostname = device.show_command('show hostname').strip()
     return hostname
+
 
 def intro(args):
     """Intro message to script.
@@ -303,6 +312,7 @@ OUT_IF:
            hash_info.get('resets') or 'N/A',
            hash_info.get('tx_counters') or 'N/A')
 
+
 def handle_args():
     """Parse command line arguments, and prompt user if they are not given.
     """
@@ -318,7 +328,9 @@ def handle_args():
     parser.add_argument('--target',
                         help='The IP address or hostname of the switch to start the flow track.')
     parser.add_argument('--user',
-                        help='The SSH username for the switch.')
+                        help='The SSH/NXAPI username for the switch.')
+    parser.add_argument('--pwd',
+                        help='The SSH/NXAPI password for the switch.')
     parser.add_argument('--src_port', help='The source layer 4 port of the flow.')
     parser.add_argument('--dest_port', help='The destination layer 4 port of the flow.')
     parser.add_argument('--vrf',
@@ -335,25 +347,32 @@ def handle_args():
     args = parser.parse_args()
     while not args.src:
         args.src = raw_input('Enter source IP of the flow: ')
+        args.src = socket.gethostbyname(args.src)
     while not args.dest:
         args.dest = raw_input('Enter destination IP of the flow: ')
+        args.dest = socket.gethostbyname(args.dest)
     while not args.proto:
         args.proto = raw_input('Enter IP protocol(tcp, udp, icmp, <number>): ')
         args.proto = convert_proto(args.proto)
     while not args.target:
-        args.target = raw_input('Enter IP or hostname of first switch to connect to: ')
-    while not args.user:
-        args.user = raw_input('Enter the SSH/NXAPI username: ')
+        args.target = raw_input(
+            'Enter IP or hostname of first switch to connect to: ')
+        args.target = socket.gethostbyname(args.target)
     if args.use_mgmt is False:
         args.use_mgmt = None
     while args.use_mgmt is None:
-        args.use_mgmt = args.use_mgmt or raw_input('Use Management Interfaces for SSH[Y/N]: ')
+        args.use_mgmt = args.use_mgmt or raw_input(
+            'Use Management Interfaces for SSH[Y/N]: ')
         if args.use_mgmt.lower().startswith('y'):
             args.use_mgmt = True
         elif args.use_mgmt.lower().startswith('n'):
             args.use_mgmt = False
         else:
             args.use_mgmt = None
+    while not args.user:
+        args.user = raw_input('Enter the SSH/NXAPI username: ')
+    while not args.pwd:
+        args.pwd = getpass("SSH/NXAPI Password: ")
 
     if args.proto == '6' or args.proto == '17':
         args.src_port = args.src_port or raw_input('(Optional) TCP/UDP Source Port: ')
@@ -365,12 +384,55 @@ def handle_args():
         print "--src_port and --dest_port must be supplied together."
         sys.exit()
 
-    args.pwd = getpass("SSH/NXAPI Password: ")
-    args.target = socket.gethostbyname(args.target)
-    args.src = socket.gethostbyname(args.src)
-    args.dest = socket.gethostbyname(args.dest)
-
     return args
+
+def get_flow_info_string(args, device, hash_info):
+    """Get a string of flow information.
+    """
+    # Get the outgoing interface and statistics
+    out_if = hash_info.get('out_if')
+    iface_stats = get_iface_stats(device, out_if)
+    hash_info.update(iface_stats)
+
+    # Print out information for the flow on current hop
+    hostname = get_hostname(device)
+    output = stringify(args.target, args.dest, hostname, hop_number, **hash_info)
+
+    return output
+
+
+def query_switch(args):
+    """Query and print info from the switch.
+    """
+    # Decide whether to connect over NXAPI or SSH
+    if args.use_mgmt:
+        device_type = PYCSCO_TYPE
+    else:
+        device_type = SSH_TYPE
+
+    device = Device(device_type).get_instance(
+        connect_ip, args.user, args.pwd)
+
+    # Get details of flow's hash on current switch.
+    try:
+        hash_info = get_hash_info(device,
+                                  src=args.src,
+                                  dest=args.dest,
+                                  ip_proto=args.proto,
+                                  src_port=args.src_port,
+                                  dest_port=args.dest_port)
+    except HashError as he:
+        print 'Error at node {}'.format(args.target)
+        print 'show routing hash output:'
+        print he.hash_output
+        sys.exit()
+
+    # Get flow info an dprint it
+    flow_info_string = get_flow_info_string(args, device, hash_info)
+    print flow_info_string
+
+    return hash_info, device
+
 
 if __name__ == "__main__":
     # Handle arguments and print introduction
@@ -388,42 +450,11 @@ if __name__ == "__main__":
     # the loop stops.
     while args.target != args.dest\
             and 'local' not in out_if:
-
         # Used later to calculate elapsed time
         starttime = datetime.now()
 
-        # Decide whether to connect over NXAPI or SSH
-        if args.use_mgmt:
-            device_type = PYCSCO_TYPE
-        else:
-            device_type = SSH_TYPE
-
-        device = Device(device_type).get_instance(connect_ip, args.user, args.pwd)
-
-
-        # Get details of flow's hash on current switch.
-        try:
-            hash_info = get_hash_info(device,
-                                      src=args.src,
-                                      dest=args.dest,
-                                      ip_proto=args.proto,
-                                      src_port=args.src_port,
-                                      dest_port=args.dest_port)
-        except HashError as he:
-            print 'Error at node {}'.format(args.target)
-            print 'show routing hash output:'
-            print he.hash_output
-            sys.exit()
-
-        # Get the outgoing interface and statistics
-        out_if = hash_info.get('out_if')
-        iface_stats = get_iface_stats(device, out_if)
-        hash_info.update(iface_stats)
-
-        # Print out information for the flow on current hop
-        hostname = get_hostname(device)
-        out = stringify(args.target, args.dest, hostname, hop_number, **hash_info)
-        print out
+        # Query the switch
+        hash_info, device = query_switch(args)
 
         # Set up for next loop iteration
         args.target = hash_info.get('next_hop')
