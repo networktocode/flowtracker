@@ -1,8 +1,0 @@
----
-interfaces:
-    - Ethernet1/49
-    - Ethernet1/51
-    - Ethernet1/50
-    - Ethernet1/52
-
-down_interfaces: []

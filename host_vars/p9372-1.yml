@@ -1,7 +1,0 @@
----
-loop_ip: 3.3.3.3
-interfaces_ips:
-  - { interface: Ethernet1/49, ip: 10.10.10.2 }
-  - { interface: Ethernet1/51, ip: 10.10.20.2 }
-  - { interface: Ethernet1/50, ip: 10.10.50.2 }
-  - { interface: Ethernet1/52, ip: 10.10.60.2 }

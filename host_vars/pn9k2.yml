@@ -1,7 +1,0 @@
----
-loop_ip: 2.2.2.2
-interfaces_ips:
-  - { interface: Ethernet2/1, ip: 10.10.50.1 }
-  - { interface: Ethernet2/2, ip: 10.10.60.1 }
-  - { interface: Ethernet2/3, ip: 10.10.70.1 }
-  - { interface: Ethernet2/4, ip: 10.10.80.1 }
