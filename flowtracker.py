@@ -37,8 +37,9 @@ class Device(object):
         elif self.device_type == PYCSCO_TYPE:
             nxos_device = PycscoDevice(hostname, username, password)
             try:
-                nxos_device.show('sh version')
+                nxos_device.show_command('sh version')
             except Exception:
+                print 'NXAPI not found on device {}, attempting SSH.'.format(hostname)
                 return SshDevice(hostname, username, password)
 
             return nxos_device
@@ -268,7 +269,7 @@ def get_hostname(device):
     return hostname
 
 
-def intro(args):
+def get_intro(args):
     """Intro message to script.
     """
     return """
@@ -392,7 +393,7 @@ def handle_args():
 
     return args
 
-def get_flow_info_string(args, device, hash_info):
+def get_flow_info_string(args, device, hop_number, hash_info):
     """Get a string of flow information.
     """
     # Get the outgoing interface and statistics
@@ -407,7 +408,7 @@ def get_flow_info_string(args, device, hash_info):
     return output
 
 
-def query_switch(args):
+def query_switch(connect_ip, hop_number, args):
     """Query and print info from the switch.
     """
     # Decide whether to connect over NXAPI or SSH
@@ -434,7 +435,7 @@ def query_switch(args):
         sys.exit()
 
     # Get flow info an dprint it
-    flow_info_string = get_flow_info_string(args, device, hash_info)
+    flow_info_string = get_flow_info_string(args, device, hop_number, hash_info)
     print flow_info_string
 
     return hash_info, device
@@ -442,7 +443,7 @@ def query_switch(args):
 def main():
     # Handle arguments and print introduction
     args = handle_args()
-    intro = intro(args)
+    intro = get_intro(args)
     print intro
 
     # Initialize loop conditional variables
@@ -459,7 +460,7 @@ def main():
         starttime = datetime.now()
 
         # Query the switch
-        hash_info, device = query_switch(args)
+        hash_info, device = query_switch(connect_ip, hop_number, args)
 
         # Set up for next loop iteration
         args.target = hash_info.get('next_hop')
