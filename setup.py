@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(name='flowtracker',
       version='0.0.1',
-      description='Track multi-pathed flows through Cisco Nexus switches.'
+      description='Track multi-pathed flows through Cisco Nexus switches.',
       packages=[],
       install_requires=['netmiko', 'pycsco'],
       scripts=['flowtracker.py'],
