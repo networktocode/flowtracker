@@ -6,7 +6,7 @@ It can be executed on any standalone host with Python installed (e.g. Linux, Mac
 
 It **requires** the external python libraries, ``pycsco`` and ``netmiko``, but these can be installed automatically using the installation instructions below.
 
-# Installation
+# Installation (syntax below for Linux/Mac, but analogous steps for Windows)
 
 ## via ``pip``:
 
@@ -22,16 +22,18 @@ cd flowtracker
 sudo python setup.py install
 ```
 
+Both methods install an executable on the host's system path so that the script can be executed by simply typing ``flowtracker`` from the command prompt.
+
 # Usage
 
 ## Script arguments
 
-The arguments given to the script supply information about the flow to track, and the Nexus switches to contact. All arguments can be supplied either via command line flags, or by interactive prompt to the user. If an argument isn't supplied by a flag, the user will be prompted for that argument. A special flag `-h` or `--help` prints a description about each of the other arguments and how to use them as command line flags. Below is the output from running ``flowtracker.py -h``.
+The arguments given to the script supply information about the flow to track, and the Nexus switches to contact. All arguments can be supplied either via command line flags, or by interactive prompt to the user. If an argument isn't supplied by a flag, the user will be prompted for that argument. A special flag `-h` or `--help` prints a description about each of the other arguments and how to use them as command line flags. Below is the output from running ``flowtracker -h``.
 ```
-usage: flowtracker.py [-h] [--src SRC] [--dest DEST] [--proto PROTO]
-                      [--target TARGET] [--user USER] [--pwd PWD]
-                      [--src_port SRC_PORT] [--dest_port DEST_PORT]
-                      [--vrf VRF] [--mode {interactive,auto}] [--use_mgmt]
+usage: flowtracker  [-h] [--src SRC] [--dest DEST] [--proto PROTO]
+                    [--target TARGET] [--user USER] [--pwd PWD]
+                    [--src_port SRC_PORT] [--dest_port DEST_PORT]
+                    [--vrf VRF] [--mode {interactive,auto}] [--use_mgmt]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -64,8 +66,13 @@ Like most other arguments, if the SSH/NXAPI password (``--pwd``) isn't supplied 
 
 Below is an example runing the script with a combination of command line flags and prompts. ``--mode``, ``--use_mgmt``, ``--target``, and ``--user`` are supplied via command line flags. The flow's *source IP*, *destination IP*, *source port*, *destination port*, *IP protocol* are supplied by responding to prompts. Likewise are the *password*, and *vrf*. The *password* is hidden, and the optional **vrf** argument is not supplied.
 
+Initial execution:
 ```
-python flowtracker.py --mode auto --use_mgmt --target p9372-1 --user cisco
+flowtracker --mode auto --use_mgmt --target p9372-1 --user cisco
+```
+
+Prompts:
+```
 Enter source IP of the flow: 3.3.3.3
 Enter destination IP of the flow: 4.4.4.4
 Enter IP protocol(tcp, udp, icmp, <number>): tcp
