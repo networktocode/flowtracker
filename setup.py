@@ -8,7 +8,10 @@ setup(name='flowtracker',
       entry_points={
         'console_scripts': [
             'flowtracker=flowtracker:main'
-            ]
-        }
+        ]
+      },
+      url = 'https://github.com/networktocode/flowtracker/',
+      download_url = 'https://github.com/networktocode/flowtracker/tarball/0.1',
+      keywords = ['nxapi', 'nexus', 'pycsco', 'cisco']
       )
 
