@@ -35,7 +35,13 @@ class Device(object):
         if self.device_type == SSH_TYPE:
             return SshDevice(hostname, username, password)
         elif self.device_type == PYCSCO_TYPE:
-            return PycscoDevice(hostname, username, password)
+            nxos_device = PycscoDevice(hostname, username, password)
+            try:
+                nxos_device.show('sh version')
+            except Exception:
+                return SshDevice(hostname, username, password)
+
+            return nxos_device
 
     def show_command(self, cmd):
         """Base method for returning output from a show command.
@@ -433,8 +439,7 @@ def query_switch(args):
 
     return hash_info, device
 
-
-if __name__ == "__main__":
+def main():
     # Handle arguments and print introduction
     args = handle_args()
     intro = intro(args)
@@ -480,3 +485,6 @@ if __name__ == "__main__":
             loop = 'a'
             while loop:
                 loop = raw_input("Hit Enter to Continue...")
+
+if __name__ == "__main__":
+    main()
