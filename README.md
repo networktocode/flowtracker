@@ -6,7 +6,8 @@ It can be executed on any standalone host with Python installed (e.g. Linux, Mac
 
 It **requires** the external python libraries, ``pycsco`` and ``netmiko``, but these can be installed automatically using the installation instructions below.
 
-# Installation (syntax below for Linux/Mac, but analogous steps for Windows)
+# Installation
+(syntax below for Linux/Mac, but analogous steps for Windows)
 
 ## via ``pip``:
 
