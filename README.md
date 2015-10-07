@@ -65,7 +65,7 @@ Like most other arguments, if the SSH/NXAPI password (``--pwd``) isn't supplied 
 
 ## Running the script:
 
-Below is an example runing the script with a combination of command line flags and prompts. ``--mode``, ``--use_mgmt``, ``--target``, and ``--user`` are supplied via command line flags. The flow's *source IP*, *destination IP*, *source port*, *destination port*, *IP protocol* are supplied by responding to prompts. Likewise are the *password*, and *vrf*. The *password* is hidden, and the optional **vrf** argument is not supplied.
+Below is an example runing the script with a combination of command line flags and prompts. ``--mode``, ``--use_mgmt``, ``--target``, and ``--user`` are supplied via command line flags. The flow's *source IP*, *destination IP*, *source port*, *destination port*, *IP protocol* are supplied by responding to prompts. Likewise are the *password*, and *vrf*. The *password* is hidden, and the optional **vrf** argument is not supplied, so the "default" vrf will be used.
 
 Initial execution:
 ```
