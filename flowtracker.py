@@ -8,6 +8,7 @@ import re
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from netmiko import ConnectHandler
+from netmiko.ssh_exception import NetMikoAuthenticationException, NetMikoTimeoutException
 from getpass import getpass
 from pycsco.nxos.device import Device as PYCSCO
 
@@ -67,10 +68,14 @@ class SshDevice(Device):
                 password=password,
                 verbose=False
             )
-        except:
+        except Exception as e:
             print 'Error SSHing to device at {}'.format(
                 hostname)
-            print 'This may not be a Cisco device, or there may an authentication issue.'
+            if isinstance(e, NetMikoAuthenticationException):
+                print 'This may not be a Cisco device, or there may an authentication issue.'
+            elif isinstance(e, NetMikoTimeoutException):
+                print 'Could not connect to device'
+
             sys.exit()
 
     def show_command(self, cmd):
@@ -352,6 +357,10 @@ def handle_args():
                              + 'Uses the NXAPI instead of SSH.')
 
     args = parser.parse_args()
+    while not args.user:
+        args.user = raw_input('SSH/NXAPI username: ')
+    while not args.pwd:
+        args.pwd = getpass('SSH/NXAPI password: ')
     while not args.src:
         args.src = raw_input('Enter source IP of the flow: ')
         args.src = socket.gethostbyname(args.src)
@@ -361,6 +370,9 @@ def handle_args():
     while not args.proto:
         args.proto = raw_input('Enter IP protocol(tcp, udp, icmp, <number>): ')
         args.proto = convert_proto(args.proto)
+    if args.proto == '6' or args.proto == '17':
+        args.src_port = args.src_port or raw_input('(Optional) TCP/UDP Source Port: ')
+        args.dest_port = args.dest_port or raw_input('(Optional) TCP/UDP Destination Port: ')
     while not args.target:
         args.target = raw_input(
             'Enter IP or hostname of first switch to connect to: ')
@@ -376,16 +388,8 @@ def handle_args():
             args.use_mgmt = False
         else:
             args.use_mgmt = None
-    while not args.user:
-        args.user = raw_input('Enter the SSH/NXAPI username: ')
-    while not args.pwd:
-        args.pwd = getpass("SSH/NXAPI Password: ")
 
-    if args.proto == '6' or args.proto == '17':
-        args.src_port = args.src_port or raw_input('(Optional) TCP/UDP Source Port: ')
-        args.dest_port = args.dest_port or raw_input('(Optional) TCP/UDP Destination Port: ')
-
-    args.vrf = args.vrf or raw_input('(Optional) VRF of the flow: ')
+    args.vrf = args.vrf or raw_input('(Optional) VRF of the flow [default]: ')
 
     if bool(args.src_port) != bool(args.dest_port):
         print "--src_port and --dest_port must be supplied together."
